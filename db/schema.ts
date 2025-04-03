@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
     boolean,
     timestamp,
@@ -5,6 +6,8 @@ import {
     text,
     primaryKey,
     integer,
+    uuid,
+    pgEnum,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -93,3 +96,56 @@ export const authenticators = pgTable(
         },
     ]
 );
+
+// Document status enum
+export const documentStatus = pgEnum("document_status", [
+    "Active",
+    "AboutToExpire",
+    "Expired",
+]);
+
+// Employee model
+export const employees = pgTable("employees", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    fullName: text("full_name").notNull(),
+    position: text("position").notNull(),
+    education: text("education").notNull(),
+    avatar: text("avatar"),
+    birthday: timestamp("birthday", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
+
+export const documents = pgTable("documents", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    title: text("title").notNull(),
+    path: text("path").notNull(),
+    category: text("category").notNull(),
+    status: documentStatus("status").default("Active").notNull(),
+    documentType: text("document_type").notNull(),
+    documentSize: text("document_size").notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+    expirationDate: timestamp("expiration_date", { mode: "date" }),
+    authorId: uuid("author_id")
+        .notNull()
+        .references(() => employees.id, { onDelete: "cascade" }),
+});
+
+export const employeesRelations = relations(employees, ({ many }) => ({
+    documents: many(documents),
+}));
+
+export const documentsRelations = relations(documents, ({ one }) => ({
+    author: one(employees, {
+        fields: [documents.authorId],
+        references: [employees.id],
+    }),
+}));
+
+// Types
+export type Employee = typeof employees.$inferSelect;
+export type NewEmployee = typeof employees.$inferInsert;
+
+export type Document = typeof documents.$inferSelect;
+export type NewDocument = typeof documents.$inferInsert;
