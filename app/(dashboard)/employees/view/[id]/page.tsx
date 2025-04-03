@@ -25,10 +25,12 @@ import { EmployeeDocumentsTable } from "@/components/employee/employee-documents
 export default async function ViewEmployeePage({
     params,
 }: {
-    params: { id: string };
+    params: Promise<any>;
 }) {
     // Fetch the employee with Drizzle
-    const employee = await getEmployeeById(params.id);
+    const { id } = await params;
+
+    const employee = await getEmployeeById(id);
 
     // If employee not found, return 404
     if (!employee) {
