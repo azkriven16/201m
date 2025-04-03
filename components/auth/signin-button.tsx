@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { signIn } from "@/auth";
-import Logo201Manager from "../logo";
+import Logo from "../logo";
 
 const GoogleLoginForm = () => {
     return (
@@ -24,7 +24,7 @@ const GoogleLoginForm = () => {
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="space-y-2 text-center">
                     <div className="flex justify-center mb-2">
-                        <Logo201Manager size="medium" />
+                        <Logo size="medium" />
                     </div>
                     <CardTitle className="text-2xl font-bold">
                         Welcome to 201 Manager

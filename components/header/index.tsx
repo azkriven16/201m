@@ -1,4 +1,4 @@
-import Logo201Manager from "@/components/logo";
+import Logo from "@/components/logo";
 import Link from "next/link";
 import MobileNav from "./mobile-nav";
 import UserMenu from "./user-menu";
@@ -12,7 +12,7 @@ export default function Header() {
                     {/* Logo (Left) */}
                     <div className="flex-shrink-0">
                         <Link href="/dashboard">
-                            <Logo201Manager size="small" />
+                            <Logo size="small" />
                         </Link>
                     </div>
 

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import Logo201Manager from "@/components/logo";
+import Logo from "@/components/logo";
 
 const MobileNav = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +30,7 @@ const MobileNav = () => {
                 <SheetContent side="right" className="w-[250px] sm:w-[300px]">
                     <div className="flex flex-col h-full">
                         <div className="flex items-center justify-between py-4">
-                            <Logo201Manager size="small" />
+                            <Logo size="small" />
                             <Button
                                 variant="ghost"
                                 size="icon"
