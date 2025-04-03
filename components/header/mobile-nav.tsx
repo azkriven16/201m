@@ -1,4 +1,3 @@
-// components/MobileNav.jsx
 "use client";
 
 import { useState } from "react";
