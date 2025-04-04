@@ -17,16 +17,10 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import { format } from "date-fns";
 import type { Employee } from "@/db/schema"; // Import the Employee type from Drizzle schema
 import { UploadButton } from "@/lib/uploadthing";
+import { StepDatePicker } from "@/components/employee/step-date-picker";
 
 // Define the schema for client-side validation
 const formSchema = z.object({
@@ -351,78 +345,56 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                                     <FormLabel>Birthday</FormLabel>
                                     <div className="flex gap-2">
                                         <FormControl>
-                                            <Input
-                                                placeholder="MM/DD/YYYY"
-                                                value={
-                                                    field.value
-                                                        ? format(
-                                                              field.value,
-                                                              "MM/dd/yyyy"
-                                                          )
-                                                        : ""
-                                                }
-                                                onChange={(e) => {
-                                                    const value =
-                                                        e.target.value;
-                                                    const date = new Date(
-                                                        value
-                                                    );
-                                                    // Check if the date is valid and not in the future
-                                                    if (
-                                                        !isNaN(
-                                                            date.getTime()
-                                                        ) &&
-                                                        date <= new Date()
-                                                    ) {
-                                                        field.onChange(date);
-                                                    } else if (value === "") {
-                                                        // Clear the field if input is empty
-                                                        field.onChange(
-                                                            undefined
+                                            <div className="flex gap-2 w-full">
+                                                <Input
+                                                    placeholder="MM/DD/YYYY"
+                                                    value={
+                                                        field.value
+                                                            ? format(
+                                                                  field.value,
+                                                                  "MM/dd/yyyy"
+                                                              )
+                                                            : ""
+                                                    }
+                                                    className="text-left flex-1"
+                                                    onChange={(e) => {
+                                                        const value =
+                                                            e.target.value;
+                                                        // Allow empty input
+                                                        if (value === "") {
+                                                            field.onChange(
+                                                                undefined
+                                                            );
+                                                            return;
+                                                        }
+
+                                                        // Try to parse the date
+                                                        const date = new Date(
+                                                            value
                                                         );
-                                                    }
-                                                }}
-                                            />
-                                        </FormControl>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    size="icon"
-                                                >
-                                                    <CalendarIcon className="h-4 w-4" />
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent
-                                                className="w-auto p-0"
-                                                align="end"
-                                            >
-                                                <Calendar
-                                                    mode="single"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
-                                                    initialFocus
-                                                    disabled={(date) =>
-                                                        date > new Date()
-                                                    }
-                                                    fromYear={1940}
-                                                    toYear={new Date().getFullYear()}
-                                                    captionLayout="dropdown-buttons"
-                                                    classNames={{
-                                                        caption_label:
-                                                            "text-sm font-medium",
-                                                        dropdown: "p-1",
-                                                        caption_dropdowns:
-                                                            "flex justify-center gap-1",
-                                                        vhidden: "hidden",
+                                                        if (
+                                                            !isNaN(
+                                                                date.getTime()
+                                                            )
+                                                        ) {
+                                                            field.onChange(
+                                                                date
+                                                            );
+                                                        }
                                                     }}
                                                 />
-                                            </PopoverContent>
-                                        </Popover>
+                                                <StepDatePicker
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    className="flex-1"
+                                                />
+                                            </div>
+                                        </FormControl>
                                     </div>
                                     <FormDescription>
                                         Enter the employee's date of birth. You
-                                        can type the date or use the calendar.
+                                        can type the date in MM/DD/YYYY format
+                                        or use the step-by-step date picker.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
