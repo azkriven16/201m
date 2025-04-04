@@ -46,6 +46,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { toast } from "sonner";
 
 // Define the employee type
 interface Employee {
@@ -108,13 +109,28 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
             });
 
             if (!response.ok) {
-                throw new Error("Failed to delete employee");
+                const errorData = await response.json();
+                throw new Error(errorData.error || "Failed to delete employee");
             }
+
+            // Show success toast
+            toast.success("Employee deleted successfully", {
+                description: `${employeeToDelete?.fullName} has been removed from the system.`,
+                duration: 5000,
+            });
 
             // Refresh the page to update the employee list
             router.refresh();
         } catch (error) {
             console.error("Error deleting employee:", error);
+
+            // Show error toast
+            toast.error("Failed to delete employee", {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "An unexpected error occurred",
+            });
         } finally {
             setIsDeleting(false);
             setDeleteDialogOpen(false);

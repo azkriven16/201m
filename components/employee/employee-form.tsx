@@ -82,6 +82,10 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                     body: JSON.stringify({ fileKey: newUploadKey }),
                 }).catch((error) => {
                     console.error("Error cleaning up uploaded file:", error);
+                    toast.error("Failed to clean up uploaded file", {
+                        description:
+                            "The temporary file couldn't be deleted. This won't affect your data.",
+                    });
                 });
             }
         };
@@ -125,9 +129,19 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
             // Mark form as successfully submitted
             setFormSubmitted(true);
 
-            toast(
-                `Employee ${isEditMode ? "updated" : "created"} successfully`
+            // Show success toast
+            toast.success(
+                isEditMode
+                    ? "Employee updated successfully"
+                    : "Employee created successfully",
+                {
+                    description: isEditMode
+                        ? `${values.fullName}'s information has been updated.`
+                        : `${values.fullName} has been added to the system.`,
+                    duration: 5000,
+                }
             );
+
             router.push("/employees");
             router.refresh();
         } catch (error) {
@@ -135,10 +149,18 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                 `Error ${isEditMode ? "updating" : "creating"} employee:`,
                 error
             );
-            toast(
-                error instanceof Error
-                    ? error.message
-                    : `Failed to ${isEditMode ? "update" : "create"} employee`
+
+            // Show error toast
+            toast.error(
+                isEditMode
+                    ? "Failed to update employee"
+                    : "Failed to create employee",
+                {
+                    description:
+                        error instanceof Error
+                            ? error.message
+                            : "An unexpected error occurred",
+                }
             );
         } finally {
             setIsLoading(false);
@@ -161,8 +183,17 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                 body: JSON.stringify({ fileKey: newUploadKey }),
             }).catch((error) => {
                 console.error("Error cleaning up uploaded file:", error);
+                toast.error("Failed to clean up uploaded file", {
+                    description:
+                        "The temporary file couldn't be deleted. This won't affect your data.",
+                });
             });
         }
+
+        toast.info("Changes discarded", {
+            description:
+                "You've cancelled the operation. No changes were saved.",
+        });
 
         router.push("/employees");
     };
@@ -205,15 +236,33 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                                                     );
                                                     // Store the file key for potential cleanup
                                                     setNewUploadKey(res[0].key);
-                                                    toast(
-                                                        "Avatar uploaded successfully"
+                                                    toast.success(
+                                                        "Avatar uploaded successfully",
+                                                        {
+                                                            description:
+                                                                "Your new profile image has been uploaded.",
+                                                        }
                                                     );
                                                 }}
                                                 onUploadError={(
                                                     error: Error
                                                 ) => {
-                                                    toast(
-                                                        `Error uploading avatar: ${error.message}`
+                                                    toast.error(
+                                                        "Error uploading avatar",
+                                                        {
+                                                            description:
+                                                                error.message ||
+                                                                "There was a problem uploading your image.",
+                                                        }
+                                                    );
+                                                }}
+                                                onUploadBegin={() => {
+                                                    toast.info(
+                                                        "Uploading avatar...",
+                                                        {
+                                                            description:
+                                                                "Please wait while we upload your image.",
+                                                        }
                                                     );
                                                 }}
                                             />

@@ -38,6 +38,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 interface Document {
     id: string;
@@ -104,6 +105,10 @@ export function EmployeeDocumentsTable({
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
+
+        toast.info("Opening document", {
+            description: "The document is being opened or downloaded.",
+        });
     };
 
     // Edit document
@@ -123,10 +128,24 @@ export function EmployeeDocumentsTable({
                 throw new Error("Failed to delete document");
             }
 
+            // Show success toast
+            toast.success("Document deleted successfully", {
+                description: `"${documentToDelete?.title}" has been removed.`,
+                duration: 5000,
+            });
+
             // Refresh the page to update the document list
             router.refresh();
         } catch (error) {
             console.error("Error deleting document:", error);
+
+            // Show error toast
+            toast.error("Failed to delete document", {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "An unexpected error occurred",
+            });
         } finally {
             setIsDeleting(false);
             setDeleteDialogOpen(false);
