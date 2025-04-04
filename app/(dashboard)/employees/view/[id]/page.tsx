@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { format } from "date-fns";
 import { EmployeeDocumentsTable } from "@/components/employee/employee-documents-table";
-
+    
 export default async function ViewEmployeePage({
     params,
 }: {
