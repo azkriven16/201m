@@ -11,7 +11,7 @@ const NavItems = () => {
         { name: "Dashboard", path: "/dashboard" },
         { name: "Employees", path: "/employees" },
         { name: "Documents", path: "/documents" },
-        { name: "Events", path: "/events" },
+        { name: "Events", path: "/employees/birthdays" },
     ];
 
     return (

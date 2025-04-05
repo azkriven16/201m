@@ -21,12 +21,6 @@ export default async function EmployeesPage() {
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Employees</h1>
                 <div className="flex gap-2">
-                    <Link href="/employees/birthdays">
-                        <Button variant="outline" className="gap-2">
-                            <Cake className="h-4 w-4" />
-                            Birthdays
-                        </Button>
-                    </Link>
                     <Link href="/employees/add">
                         <Button className="gap-2">
                             <UserPlus className="h-4 w-4" />

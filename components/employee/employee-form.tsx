@@ -17,10 +17,9 @@ import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from "date-fns";
 import type { Employee } from "@/db/schema"; // Import the Employee type from Drizzle schema
 import { UploadButton } from "@/lib/uploadthing";
-import { StepDatePicker } from "@/components/employee/step-date-picker";
+import { BirthdayPicker } from "@/components/employee/birthday-picker";
 
 // Define the schema for client-side validation
 const formSchema = z.object({
@@ -343,58 +342,16 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                             render={({ field }) => (
                                 <FormItem className="flex flex-col">
                                     <FormLabel>Birthday</FormLabel>
-                                    <div className="flex gap-2">
-                                        <FormControl>
-                                            <div className="flex gap-2 w-full">
-                                                <Input
-                                                    placeholder="MM/DD/YYYY"
-                                                    value={
-                                                        field.value
-                                                            ? format(
-                                                                  field.value,
-                                                                  "MM/dd/yyyy"
-                                                              )
-                                                            : ""
-                                                    }
-                                                    className="text-left flex-1"
-                                                    onChange={(e) => {
-                                                        const value =
-                                                            e.target.value;
-                                                        // Allow empty input
-                                                        if (value === "") {
-                                                            field.onChange(
-                                                                undefined
-                                                            );
-                                                            return;
-                                                        }
-
-                                                        // Try to parse the date
-                                                        const date = new Date(
-                                                            value
-                                                        );
-                                                        if (
-                                                            !isNaN(
-                                                                date.getTime()
-                                                            )
-                                                        ) {
-                                                            field.onChange(
-                                                                date
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                                <StepDatePicker
-                                                    value={field.value}
-                                                    onChange={field.onChange}
-                                                    className="flex-1"
-                                                />
-                                            </div>
-                                        </FormControl>
-                                    </div>
+                                    <FormControl>
+                                        <BirthdayPicker
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                    </FormControl>
                                     <FormDescription>
-                                        Enter the employee's date of birth. You
-                                        can type the date in MM/DD/YYYY format
-                                        or use the step-by-step date picker.
+                                        Select the employee's date of birth.
+                                        First select a year, then choose the
+                                        month and day.
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>

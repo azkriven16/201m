@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-
 import { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Cake } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,7 +24,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
 
 interface Employee {
     id: string;
@@ -94,12 +93,20 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold">
-                    {format(currentMonth, "MMMM yyyy")}
-                </h2>
+            {/* Calendar Header with Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-1">
+                    <h2 className="text-xl font-semibold">
+                        {format(currentMonth, "MMMM yyyy")}
+                    </h2>
+                </div>
                 <div className="flex items-center gap-2">
-                    <Button variant="outline" size="icon" onClick={prevMonth}>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={prevMonth}
+                        className="h-8 w-8"
+                    >
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
                     <div className="flex items-center gap-1">
@@ -125,7 +132,7 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
                                 setCurrentMonth(newMonth);
                             }}
                         >
-                            <SelectTrigger className="w-[130px]">
+                            <SelectTrigger className="w-[130px] h-8">
                                 <SelectValue
                                     placeholder={format(currentMonth, "MMMM")}
                                 />
@@ -160,7 +167,7 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
                                 setCurrentMonth(newMonth);
                             }}
                         >
-                            <SelectTrigger className="w-[90px]">
+                            <SelectTrigger className="w-[90px] h-8">
                                 <SelectValue
                                     placeholder={format(currentMonth, "yyyy")}
                                 />
@@ -180,21 +187,31 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
                             </SelectContent>
                         </Select>
                     </div>
-                    <Button variant="outline" size="icon" onClick={nextMonth}>
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={nextMonth}
+                        className="h-8 w-8"
+                    >
                         <ChevronRight className="h-4 w-4" />
                     </Button>
-                    <Button variant="outline" onClick={goToToday}>
+                    <Button
+                        variant="outline"
+                        onClick={goToToday}
+                        className="h-8 text-xs px-2 sm:text-sm sm:px-3"
+                    >
                         Today
                     </Button>
                 </div>
             </div>
 
+            {/* Calendar Grid */}
             <div className="grid grid-cols-7 gap-1">
                 {/* Day names */}
                 {dayNames.map((day) => (
                     <div
                         key={day}
-                        className="text-center py-2 font-medium text-sm"
+                        className="text-center py-2 font-medium text-xs sm:text-sm"
                     >
                         {day}
                     </div>
@@ -204,47 +221,61 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
                 {days.map((day, i) => {
                     const birthdaysOnDay = getBirthdaysOnDay(day);
                     const isCurrentMonth = isSameMonth(day, currentMonth);
+                    const isTodayDate = isToday(day);
 
                     return (
                         <div
                             key={i}
-                            className={`min-h-[100px] p-2 border rounded-md ${
+                            className={`min-h-[60px] sm:min-h-[80px] p-1 border rounded-md ${
                                 isCurrentMonth ? "bg-card" : "bg-muted/30"
                             } ${
-                                isToday(day)
-                                    ? "border-primary"
-                                    : "border-border"
-                            }`}
+                                isTodayDate ? "border-primary" : "border-border"
+                            } 
+                ${
+                    birthdaysOnDay.length > 0 && isCurrentMonth
+                        ? "bg-primary/5"
+                        : ""
+                }`}
                         >
-                            <div
-                                className={`text-right text-sm mb-1 ${
-                                    isCurrentMonth
-                                        ? "text-foreground"
-                                        : "text-muted-foreground"
-                                }`}
-                            >
-                                {format(day, "d")}
+                            <div className="flex justify-between items-center mb-1">
+                                <div
+                                    className={`text-xs ${
+                                        isCurrentMonth
+                                            ? "text-foreground"
+                                            : "text-muted-foreground"
+                                    } ${
+                                        isTodayDate
+                                            ? "font-bold text-primary"
+                                            : ""
+                                    }`}
+                                >
+                                    {format(day, "d")}
+                                </div>
+                                {birthdaysOnDay.length > 0 &&
+                                    isCurrentMonth && (
+                                        <Cake className="h-3 w-3 text-primary" />
+                                    )}
                             </div>
 
-                            <div className="space-y-1">
+                            <div className="space-y-1 overflow-y-auto max-h-[40px] sm:max-h-[60px]">
                                 {birthdaysOnDay.map((employee) => (
                                     <Link
                                         key={employee.id}
                                         href={`/employees/view/${employee.id}`}
-                                        className="flex items-center gap-2 text-xs p-1 rounded-md hover:bg-muted transition-colors"
+                                        className="flex items-center gap-1 text-xs p-1 rounded-md hover:bg-muted transition-colors"
                                     >
-                                        <Avatar className="h-6 w-6">
+                                        <Avatar className="h-5 w-5 sm:h-6 sm:w-6">
                                             {employee.avatar ? (
                                                 <AvatarImage
                                                     src={employee.avatar}
                                                     alt={employee.fullName}
                                                 />
                                             ) : null}
-                                            <AvatarFallback className="text-[10px]">
+                                            <AvatarFallback className="text-[8px] sm:text-[10px]">
                                                 {getInitials(employee.fullName)}
                                             </AvatarFallback>
                                         </Avatar>
-                                        <span className="truncate">
+                                        <span className="truncate hidden xs:inline">
                                             {employee.fullName}
                                         </span>
                                     </Link>
