@@ -11,7 +11,7 @@ const MobileNav = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const navItems = [
-        { name: "Dashboard", path: "/dashboard" },
+        { name: "Dashboard", path: "/" },
         { name: "Employees", path: "/employees" },
         { name: "Documents", path: "/documents" },
         { name: "Events", path: "/events" },

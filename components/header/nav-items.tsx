@@ -8,7 +8,7 @@ const NavItems = () => {
     const pathname = usePathname();
 
     const navItems = [
-        { name: "Dashboard", path: "/dashboard" },
+        { name: "Dashboard", path: "/" },
         { name: "Employees", path: "/employees" },
         { name: "Documents", path: "/documents" },
         { name: "Events", path: "/employees/birthdays" },

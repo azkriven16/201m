@@ -11,7 +11,7 @@ export default function Header() {
                 <div className="flex items-center justify-between">
                     {/* Logo (Left) */}
                     <div className="flex-shrink-0">
-                        <Link href="/dashboard">
+                        <Link href="/">
                             <Logo size="small" />
                         </Link>
                     </div>

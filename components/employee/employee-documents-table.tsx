@@ -39,18 +39,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
-
-interface Document {
-    id: string;
-    title: string;
-    path: string;
-    category: string;
-    status: string;
-    documentType: string;
-    documentSize: string;
-    createdAt: Date;
-    expirationDate: Date | null;
-}
+import type { Document } from "@/db/schema";
 
 interface EmployeeDocumentsTableProps {
     documents: Document[];
@@ -176,80 +165,94 @@ export function EmployeeDocumentsTable({
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {documents.map((doc) => (
-                            <TableRow key={doc.id}>
-                                <TableCell>
-                                    <div className="flex flex-col">
-                                        <div className="flex items-center gap-2">
-                                            {getFileIcon(doc.documentType)}
-                                            <span>{doc.title}</span>
+                        {documents.length > 0 ? (
+                            documents.map((doc) => (
+                                <TableRow key={doc.id}>
+                                    <TableCell>
+                                        <div className="flex flex-col">
+                                            <div className="flex items-center gap-2">
+                                                {getFileIcon(doc.documentType)}
+                                                <span>{doc.title}</span>
+                                            </div>
+                                            <div className="text-xs text-muted-foreground mt-1">
+                                                {doc.documentType} •{" "}
+                                                {doc.documentSize}
+                                            </div>
                                         </div>
-                                        <div className="text-xs text-muted-foreground mt-1">
-                                            {doc.documentType} •{" "}
-                                            {doc.documentSize}
-                                        </div>
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    {doc.category
-                                        .replace(/([A-Z])/g, " $1")
-                                        .trim()}
-                                </TableCell>
-                                <TableCell>
-                                    {format(
-                                        new Date(doc.createdAt),
-                                        "MMM d, yyyy"
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    {doc.expirationDate
-                                        ? format(
-                                              new Date(doc.expirationDate),
-                                              "MMM d, yyyy"
-                                          )
-                                        : "N/A"}
-                                </TableCell>
-                                <TableCell>
-                                    {getStatusBadge(doc.status)}
-                                </TableCell>
-                                <TableCell className="text-right">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button variant="ghost" size="icon">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    openDocument(doc.path)
-                                                }
-                                            >
-                                                <ExternalLink className="mr-2 h-4 w-4" />
-                                                <span>Open</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                onClick={() =>
-                                                    editDocument(doc.id)
-                                                }
-                                            >
-                                                <Edit className="mr-2 h-4 w-4" />
-                                                <span>Edit</span>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem
-                                                className="text-destructive"
-                                                onClick={() =>
-                                                    confirmDelete(doc)
-                                                }
-                                            >
-                                                <Trash2 className="mr-2 h-4 w-4" />
-                                                <span>Delete</span>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                    </TableCell>
+                                    <TableCell>
+                                        {doc.category
+                                            .replace(/([A-Z])/g, " $1")
+                                            .trim()}
+                                    </TableCell>
+                                    <TableCell>
+                                        {format(
+                                            new Date(doc.createdAt),
+                                            "MMM d, yyyy"
+                                        )}
+                                    </TableCell>
+                                    <TableCell>
+                                        {doc.expirationDate
+                                            ? format(
+                                                  new Date(doc.expirationDate),
+                                                  "MMM d, yyyy"
+                                              )
+                                            : "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {getStatusBadge(doc.status)}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                >
+                                                    <MoreHorizontal className="h-4 w-4" />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent align="end">
+                                                <DropdownMenuItem
+                                                    onClick={() =>
+                                                        openDocument(doc.path)
+                                                    }
+                                                >
+                                                    <ExternalLink className="mr-2 h-4 w-4" />
+                                                    <span>Open</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    onClick={() =>
+                                                        editDocument(doc.id)
+                                                    }
+                                                >
+                                                    <Edit className="mr-2 h-4 w-4" />
+                                                    <span>Edit</span>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuItem
+                                                    className="text-destructive"
+                                                    onClick={() =>
+                                                        confirmDelete(doc)
+                                                    }
+                                                >
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    <span>Delete</span>
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell
+                                    colSpan={6}
+                                    className="h-24 text-center"
+                                >
+                                    No documents found.
                                 </TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
             </div>

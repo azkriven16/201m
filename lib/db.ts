@@ -9,6 +9,11 @@ import {
 } from "../db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 
+// Define a type for documents with authors included
+export interface DocumentWithAuthor extends Document {
+    author: Employee | null;
+}
+
 // Employee functions
 export async function getAllEmployees(): Promise<Employee[]> {
     return db.select().from(employees).orderBy(asc(employees.fullName));
@@ -50,35 +55,42 @@ export async function deleteEmployee(id: string): Promise<boolean> {
 }
 
 // Document functions
-export async function getAllDocuments(): Promise<Document[]> {
-    // Using the relations defined in schema.ts
+// Update the getAllDocuments function to return DocumentWithAuthor[]
+export async function getAllDocuments(): Promise<DocumentWithAuthor[]> {
     const results = await db
-        .select()
+        .select({
+            document: documents,
+            employee: employees,
+        })
         .from(documents)
         .leftJoin(employees, eq(documents.authorId, employees.id))
         .orderBy(desc(documents.createdAt));
 
-    // Transform the results to match the expected format
+    // Transform the results to include the author property
     return results.map((row) => ({
-        ...row.documents,
-        author: row.employees,
+        ...row.document,
+        author: row.employee,
     }));
 }
 
 export async function getDocumentById(
     id: string
-): Promise<Document | undefined> {
+): Promise<DocumentWithAuthor | undefined> {
     const results = await db
-        .select()
+        .select({
+            document: documents,
+            employee: employees,
+        })
         .from(documents)
         .leftJoin(employees, eq(documents.authorId, employees.id))
         .where(eq(documents.id, id));
 
     if (results.length === 0) return undefined;
 
-    // Transform the result to match the expected format
+    // Transform the result to include the author property
     return {
-        ...results[0].documents,
+        ...results[0].document,
+        author: results[0].employee,
     };
 }
 
@@ -158,17 +170,22 @@ export async function getDocumentCountByCategory(): Promise<
     }, {} as Record<string, number>);
 }
 
-export async function getRecentDocuments(limit = 10): Promise<Document[]> {
+export async function getRecentDocuments(
+    limit = 10
+): Promise<DocumentWithAuthor[]> {
     const results = await db
-        .select()
+        .select({
+            document: documents,
+            employee: employees,
+        })
         .from(documents)
         .leftJoin(employees, eq(documents.authorId, employees.id))
         .orderBy(desc(documents.createdAt))
         .limit(limit);
 
-    // Transform the results to match the expected format
+    // Transform the results to include the author property
     return results.map((row) => ({
-        ...row.documents,
-        author: row.employees,
+        ...row.document,
+        author: row.employee,
     }));
 }
