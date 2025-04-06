@@ -120,6 +120,8 @@ export const documents = pgTable("documents", {
     id: uuid("id").defaultRandom().primaryKey(),
     title: text("title").notNull(),
     path: text("path").notNull(),
+    fileKey: text("file_key").notNull().default(""), // Make sure it has a default value
+    fileName: text("file_name").notNull().default(""), // Make sure it has a default value
     category: text("category").notNull(),
     status: documentStatus("status").default("Active").notNull(),
     documentType: text("document_type").notNull(),

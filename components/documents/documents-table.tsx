@@ -53,6 +53,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { toast } from "sonner";
 import type { DocumentWithAuthor } from "@/lib/db";
 
 interface DocumentsTableProps {
@@ -145,13 +146,12 @@ export function DocumentsTable({ documents }: DocumentsTableProps) {
 
     // Open document
     const openDocument = (path: string) => {
-        // Create a download link that will prompt the user to open or save the file
-        const downloadLink = document.createElement("a");
-        downloadLink.href = path;
-        downloadLink.download = path.split("/").pop() || "document";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        // For UploadThing URLs, we can open them directly in a new tab
+        window.open(path, "_blank");
+
+        toast.info("Opening document", {
+            description: "The document is being opened in a new tab.",
+        });
     };
 
     // Edit document
@@ -176,10 +176,20 @@ export function DocumentsTable({ documents }: DocumentsTableProps) {
                 throw new Error("Failed to delete document");
             }
 
+            toast.success("Document deleted successfully", {
+                description: `${documentToDelete?.title} has been deleted.`,
+            });
+
             // Refresh the page to update the document list
             router.refresh();
         } catch (error) {
             console.error("Error deleting document:", error);
+            toast.error("Failed to delete document", {
+                description:
+                    error instanceof Error
+                        ? error.message
+                        : "An unexpected error occurred",
+            });
         } finally {
             setIsDeleting(false);
             setDeleteDialogOpen(false);
@@ -287,10 +297,9 @@ export function DocumentsTable({ documents }: DocumentsTableProps) {
                     <TableBody>
                         {paginatedDocuments.length > 0 ? (
                             paginatedDocuments.map((doc, index) => {
-                                const docId = `DOC${String(index + 1).padStart(
-                                    3,
-                                    "0"
-                                )}`;
+                                const docId = `DOC${String(
+                                    startIndex + index + 1
+                                ).padStart(3, "0")}`;
 
                                 return (
                                     <TableRow key={doc.id}>

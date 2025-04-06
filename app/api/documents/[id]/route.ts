@@ -1,6 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
 import { getDocumentById, updateDocument, deleteDocument } from "@/lib/db";
 import type { documentStatus } from "@/db/schema";
 
@@ -13,7 +11,7 @@ export async function DELETE(
         // Ensure params is awaited
         const { id } = await params;
 
-        // Find the document to get the file path
+        // Find the document to get the file path and key
         const document = await getDocumentById(id);
 
         if (!document) {
@@ -33,23 +31,21 @@ export async function DELETE(
             );
         }
 
-        // Delete the file from the uploads folder
-        if (document.path) {
+        // Delete the file from UploadThing if we have a fileKey
+        if (document.fileKey) {
             try {
-                // Convert the relative path to an absolute path
-                const filePath = path.join(
-                    process.cwd(),
-                    "public",
-                    document.path.replace(/^\//, "") // Remove leading slash if present
-                );
-
-                // Check if file exists before attempting to delete
-                if (fs.existsSync(filePath)) {
-                    await fs.promises.unlink(filePath);
-                    console.log(`Deleted document file: ${filePath}`);
-                }
+                await fetch("/api/uploadthing/delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ fileKey: document.fileKey }),
+                });
             } catch (fileError) {
-                console.error("Error deleting file:", fileError);
+                console.error(
+                    "Error deleting file from UploadThing:",
+                    fileError
+                );
                 // We continue even if file deletion fails, but log the error
             }
         }
@@ -72,6 +68,7 @@ export async function PATCH(
     try {
         // Ensure params is awaited
         const { id } = await params;
+
         const data = await request.json();
 
         // Find the document to check if it exists
@@ -102,8 +99,13 @@ export async function PATCH(
         // Update the document in the database
         const updatedDocument = await updateDocument(id, {
             title: data.title,
+            path: data.path,
+            fileKey: data.fileKey,
+            fileName: data.fileName,
             category: data.category,
             status: status as (typeof documentStatus.enumValues)[number],
+            documentType: data.documentType || existingDocument.documentType,
+            documentSize: data.documentSize || existingDocument.documentSize,
             expirationDate: data.expirationDate
                 ? new Date(data.expirationDate)
                 : null,

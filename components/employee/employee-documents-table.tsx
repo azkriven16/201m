@@ -87,16 +87,11 @@ export function EmployeeDocumentsTable({
 
     // Open document
     const openDocument = (path: string) => {
-        // Create a download link that will prompt the user to open or save the file
-        const downloadLink = document.createElement("a");
-        downloadLink.href = path;
-        downloadLink.download = path.split("/").pop() || "document";
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
+        // For UploadThing URLs, we can open them directly in a new tab
+        window.open(path, "_blank");
 
         toast.info("Opening document", {
-            description: "The document is being opened or downloaded.",
+            description: "The document is being opened in a new tab.",
         });
     };
 

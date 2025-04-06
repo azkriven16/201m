@@ -14,7 +14,6 @@ export const ourFileRouter = {
         .onUploadComplete(async ({ metadata, file }) => {
             // This code RUNS ON YOUR SERVER after upload
             console.log("Upload complete for userId:", metadata.userId);
-
             console.log("file url", file.url);
 
             // Return the file URL or other data to the client
@@ -22,6 +21,43 @@ export const ourFileRouter = {
                 uploadedBy: metadata.userId,
                 url: file.url,
                 key: file.key,
+            };
+        }),
+
+    // Add a new route for document uploads
+    documentUploader: f({
+        // Accept PDF, DOC, DOCX, XLS, XLSX files up to 10MB
+        "application/pdf": { maxFileSize: "8MB", maxFileCount: 1 },
+        "application/msword": { maxFileSize: "8MB", maxFileCount: 1 },
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+            { maxFileSize: "8MB", maxFileCount: 1 },
+        "application/vnd.ms-excel": { maxFileSize: "8MB", maxFileCount: 1 },
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+            maxFileSize: "8MB",
+            maxFileCount: 1,
+        },
+        // Add more document types as needed
+    })
+        .middleware(async () => {
+            // This code runs on your server before upload
+            return { userId: "user-id", documentType: "document" };
+        })
+        .onUploadComplete(async ({ metadata, file }) => {
+            // This code RUNS ON YOUR SERVER after upload
+            console.log(
+                "Document upload complete for userId:",
+                metadata.userId
+            );
+            console.log("Document file url:", file.url);
+
+            // Return the file URL or other data to the client
+            return {
+                uploadedBy: metadata.userId,
+                url: file.url,
+                key: file.key,
+                name: file.name,
+                size: file.size,
+                type: file.type,
             };
         }),
 } satisfies FileRouter;
