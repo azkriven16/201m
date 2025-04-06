@@ -27,7 +27,7 @@ export default async function DocumentsPage() {
         activeDocuments + expiringDocuments + expiredDocuments;
 
     return (
-        <div className="container mx-auto py-6 space-y-6">
+        <div className="container mx-auto py-6 space-y-6 p-4">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Document Management</h1>
                 <Link href="/documents/upload">

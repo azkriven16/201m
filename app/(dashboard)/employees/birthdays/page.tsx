@@ -12,13 +12,14 @@ import {
 import { BirthdayCalendar } from "@/components/employee/birthday-calendar";
 import { UpcomingBirthdays } from "@/components/employee/upcoming-birthdays";
 import { TodaysBirthdays } from "@/components/employee/todays-birthday";
+import { BirthdaysThisMonth } from "@/components/employee/birthdays-this-month";
 
 export default async function EmployeeBirthdaysPage() {
     // Fetch all employees with their birthdays using Drizzle
     const employees = await getAllEmployees();
 
     return (
-        <div className="container mx-auto py-6 space-y-6">
+        <div className="container mx-auto py-6 space-y-6 p-4">
             <div className="flex justify-between items-center">
                 <div className="flex items-center gap-2">
                     <Link href="/employees">
@@ -74,6 +75,9 @@ export default async function EmployeeBirthdaysPage() {
                             <UpcomingBirthdays employees={employees} />
                         </CardContent>
                     </Card>
+
+                    {/* Birthdays This Month */}
+                    <BirthdaysThisMonth employees={employees} />
                 </div>
             </div>
         </div>
