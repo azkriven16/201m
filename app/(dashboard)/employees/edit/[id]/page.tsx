@@ -21,7 +21,7 @@ export default async function EditEmployeePage({
     }
 
     return (
-        <div className="container mx-auto py-6 max-w-4xl">
+        <div className="container mx-auto py-6 p-4">
             <div className="mb-6">
                 <Link href="/employees">
                     <Button variant="ghost" className="gap-2">

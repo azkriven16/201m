@@ -5,7 +5,7 @@ const f = createUploadthing();
 // FileRouter for your app, can contain multiple FileRoutes
 export const ourFileRouter = {
     // Define as many FileRoutes as you like, each with a unique route key
-    avatarUploader: f({ image: { maxFileSize: "4MB", maxFileCount: 1 } })
+    avatarUploader: f({ image: { maxFileSize: "32MB", maxFileCount: 1 } })
         // Set permissions and file types for this FileRoute
         .middleware(async () => {
             // This code runs on your server before upload
@@ -14,26 +14,33 @@ export const ourFileRouter = {
         .onUploadComplete(async ({ metadata, file }) => {
             // This code RUNS ON YOUR SERVER after upload
             console.log("Upload complete for userId:", metadata.userId);
-            console.log("file url", file.url);
+            console.log("File details:", {
+                url: file.url,
+                key: file.key,
+                name: file.name,
+                size: file.size,
+            });
 
             // Return the file URL or other data to the client
             return {
                 uploadedBy: metadata.userId,
                 url: file.url,
                 key: file.key,
+                name: file.name,
+                size: file.size,
             };
         }),
 
     // Add a new route for document uploads
     documentUploader: f({
-        // Accept PDF, DOC, DOCX, XLS, XLSX files up to 10MB
-        "application/pdf": { maxFileSize: "8MB", maxFileCount: 1 },
-        "application/msword": { maxFileSize: "8MB", maxFileCount: 1 },
+        // Accept PDF, DOC, DOCX, XLS, XLSX files up to 32MB
+        "application/pdf": { maxFileSize: "32MB", maxFileCount: 1 },
+        "application/msword": { maxFileSize: "32MB", maxFileCount: 1 },
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-            { maxFileSize: "8MB", maxFileCount: 1 },
-        "application/vnd.ms-excel": { maxFileSize: "8MB", maxFileCount: 1 },
+            { maxFileSize: "32MB", maxFileCount: 1 },
+        "application/vnd.ms-excel": { maxFileSize: "32MB", maxFileCount: 1 },
         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
-            maxFileSize: "8MB",
+            maxFileSize: "32MB",
             maxFileCount: 1,
         },
         // Add more document types as needed

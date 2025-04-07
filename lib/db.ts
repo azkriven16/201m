@@ -34,16 +34,35 @@ export async function createEmployee(data: NewEmployee): Promise<Employee> {
     return result[0];
 }
 
+// Update the updateEmployee function to properly handle avatar updates
 export async function updateEmployee(
     id: string,
     data: Partial<NewEmployee>
 ): Promise<Employee | undefined> {
-    const result = await db
-        .update(employees)
-        .set({ ...data, updatedAt: new Date() })
-        .where(eq(employees.id, id))
-        .returning();
-    return result[0];
+    console.log("Updating employee in database:", {
+        id,
+        ...data,
+        avatar: data.avatar ? "Avatar URL exists" : "No avatar URL",
+    });
+
+    try {
+        const result = await db
+            .update(employees)
+            .set(data)
+            .where(eq(employees.id, id))
+            .returning();
+
+        console.log(
+            "Update result:",
+            result.length > 0
+                ? "Employee updated successfully"
+                : "No employee updated"
+        );
+        return result[0];
+    } catch (error) {
+        console.error("Database error updating employee:", error);
+        throw error;
+    }
 }
 
 export async function deleteEmployee(id: string): Promise<boolean> {

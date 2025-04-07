@@ -8,6 +8,9 @@ import {
     Calendar,
     FileText,
     Cake,
+    Phone,
+    BadgeIcon as IdCard,
+    Award,
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -27,8 +30,8 @@ export default async function ViewEmployeePage({
 }: {
     params: Promise<any>;
 }) {
-    const { id } = await params;
     // Fetch the employee with Drizzle
+    const { id } = await params;
     const employee = await getEmployeeById(id);
 
     // If employee not found, return 404
@@ -48,9 +51,12 @@ export default async function ViewEmployeePage({
             .toUpperCase();
     };
 
-    // Generate email from name
-    const getEmailFromName = (name: string) => {
-        return `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
+    // Generate email from name if not provided
+    const getEmailDisplay = () => {
+        if (employee.email) return employee.email;
+        return `${employee.fullName
+            .toLowerCase()
+            .replace(/\s+/g, ".")}@example.com`;
     };
 
     // Check if today is employee's birthday
@@ -110,18 +116,36 @@ export default async function ViewEmployeePage({
                         <div className="space-y-4">
                             <div className="flex items-center gap-2">
                                 <Mail className="h-4 w-4 text-muted-foreground" />
-                                <span>
-                                    {getEmailFromName(employee.fullName)}
-                                </span>
+                                <span>{getEmailDisplay()}</span>
                             </div>
+                            {employee.mobileNumber && (
+                                <div className="flex items-center gap-2">
+                                    <Phone className="h-4 w-4 text-muted-foreground" />
+                                    <span>{employee.mobileNumber}</span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2">
                                 <Briefcase className="h-4 w-4 text-muted-foreground" />
                                 <span>{employee.position}</span>
                             </div>
+                            {employee.designation && (
+                                <div className="flex items-center gap-2">
+                                    <Award className="h-4 w-4 text-muted-foreground" />
+                                    <span>{employee.designation}</span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2">
                                 <GraduationCap className="h-4 w-4 text-muted-foreground" />
                                 <span>{employee.education}</span>
                             </div>
+                            {employee.biometricId && (
+                                <div className="flex items-center gap-2">
+                                    <IdCard className="h-4 w-4 text-muted-foreground" />
+                                    <span>
+                                        Biometric ID: {employee.biometricId}
+                                    </span>
+                                </div>
+                            )}
                             <div className="flex items-center gap-2">
                                 <Cake className="h-4 w-4 text-muted-foreground" />
                                 <span>

@@ -104,7 +104,7 @@ export const documentStatus = pgEnum("document_status", [
     "Expired",
 ]);
 
-// Employee model
+// Employee model - Updated with new fields
 export const employees = pgTable("employees", {
     id: uuid("id").defaultRandom().primaryKey(),
     fullName: text("full_name").notNull(),
@@ -112,6 +112,12 @@ export const employees = pgTable("employees", {
     education: text("education").notNull(),
     avatar: text("avatar"),
     birthday: timestamp("birthday", { mode: "date" }).notNull(),
+    // New fields
+    email: text("email"),
+    mobileNumber: text("mobile_number"),
+    biometricId: text("biometric_id"),
+    designation: text("designation"),
+    // Timestamps
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
@@ -120,8 +126,8 @@ export const documents = pgTable("documents", {
     id: uuid("id").defaultRandom().primaryKey(),
     title: text("title").notNull(),
     path: text("path").notNull(),
-    fileKey: text("file_key").notNull().default(""), // Make sure it has a default value
-    fileName: text("file_name").notNull().default(""), // Make sure it has a default value
+    fileKey: text("file_key").notNull().default(""),
+    fileName: text("file_name").notNull().default(""),
     category: text("category").notNull(),
     status: documentStatus("status").default("Active").notNull(),
     documentType: text("document_type").notNull(),
