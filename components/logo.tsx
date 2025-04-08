@@ -75,9 +75,7 @@ const Logo = ({ className = "", size = "medium" }) => {
                     ></path>
                 </g>
             </svg>
-            <span className="text-xl font-bold text-slate-800">
-                201 Manager
-            </span>
+            <span className="text-xl font-bold">201 Manager</span>
         </div>
     );
 };

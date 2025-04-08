@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
 
 const NavItems = () => {
     const pathname = usePathname();
+    const { theme } = useTheme();
 
     const navItems = [
         { name: "Dashboard", path: "/" },
@@ -21,9 +23,11 @@ const NavItems = () => {
                     key={item.name}
                     href={item.path}
                     className={cn(
-                        "text-slate-700 hover:text-indigo-600 font-medium transition-colors px-1 py-2",
+                        "text-black hover:text-black font-medium transition-colors px-1 py-2 dark:text-white dark:hover:text-white",
                         pathname === item.path &&
-                            "text-indigo-600 border-b-2 border-indigo-600"
+                            (theme === "dark"
+                                ? "border-b-2 border-white"
+                                : "border-b-2 border-black")
                     )}
                 >
                     {item.name}

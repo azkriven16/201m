@@ -6,7 +6,7 @@ import NavItems from "./nav-items";
 
 export default function Header() {
     return (
-        <header className="w-full border-b border-slate-200 bg-white">
+        <header className="w-full border-b border-slate-200">
             <div className="container mx-auto px-4 py-3">
                 <div className="flex items-center justify-between">
                     {/* Logo (Left) */}

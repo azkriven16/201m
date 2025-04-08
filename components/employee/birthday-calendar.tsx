@@ -233,7 +233,7 @@ export function BirthdayCalendar({ employees }: BirthdayCalendarProps) {
                             } 
                 ${
                     birthdaysOnDay.length > 0 && isCurrentMonth
-                        ? "bg-primary/5"
+                        ? "bg-green-300"
                         : ""
                 }`}
                         >

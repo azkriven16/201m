@@ -9,6 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LogOut, Settings, User } from "lucide-react";
 import { auth, signOut } from "@/auth";
+import Link from "next/link";
 
 const UserMenu = async () => {
     const session = await auth();
@@ -43,10 +44,12 @@ const UserMenu = async () => {
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Settings</span>
-                </DropdownMenuItem>
+                <Link href="/settings">
+                    <DropdownMenuItem className="cursor-pointer">
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Settings</span>
+                    </DropdownMenuItem>
+                </Link>
                 <DropdownMenuSeparator />
                 <form
                     action={async () => {
