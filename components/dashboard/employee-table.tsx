@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from "date-fns";
 import { Search, Eye } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { Employee } from "@/db/schema";
@@ -30,7 +29,26 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
         return (
             emp.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
             emp.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.education.toLowerCase().includes(searchQuery.toLowerCase())
+            emp.education.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (emp.biometricId &&
+                emp.biometricId
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            (emp.designation &&
+                emp.designation
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            (emp.email &&
+                emp.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (emp.mobileNumber &&
+                emp.mobileNumber
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            `${emp.fullName
+                .toLowerCase()
+                .replace(/\s+/g, ".")}@example.com`.includes(
+                searchQuery.toLowerCase()
+            )
         );
     });
 
@@ -69,10 +87,13 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
+                            <TableHead>Biometric ID</TableHead>
                             <TableHead>Employee</TableHead>
                             <TableHead>Academic Rank</TableHead>
-                            <TableHead>Join Date</TableHead>
+                            <TableHead>Educational Attainment</TableHead>
+                            <TableHead>Designation</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Mobile Number</TableHead>
                             <TableHead className="text-right">
                                 Actions
                             </TableHead>
@@ -83,11 +104,20 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                             filteredEmployees.map((emp, index) => (
                                 <TableRow key={emp.id}>
                                     <TableCell className="font-medium">
-                                        {getEmployeeId(index)}
+                                        {emp.biometricId ||
+                                            `BIO${String(index + 1).padStart(
+                                                3,
+                                                "0"
+                                            )}`}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
-                                            <Avatar>
+                                            <Avatar
+                                                className="cursor-pointer"
+                                                onClick={() =>
+                                                    viewEmployee(emp.id)
+                                                }
+                                            >
                                                 {emp.avatar ? (
                                                     <AvatarImage
                                                         src={emp.avatar}
@@ -102,18 +132,25 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                                                 <div className="font-medium">
                                                     {emp.fullName}
                                                 </div>
-                                                <div className="text-sm text-muted-foreground">
-                                                    {emp.education}
-                                                </div>
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>{emp.position}</TableCell>
+                                    <TableCell>{emp.education}</TableCell>
                                     <TableCell>
-                                        {format(
-                                            new Date(emp.createdAt),
-                                            "MMM d, yyyy"
-                                        )}
+                                        {emp.designation || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {emp.email ||
+                                            `${emp.fullName
+                                                .toLowerCase()
+                                                .replace(
+                                                    /\s+/g,
+                                                    "."
+                                                )}@example.com`}
+                                    </TableCell>
+                                    <TableCell>
+                                        {emp.mobileNumber || "N/A"}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <Button
@@ -130,7 +167,7 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={5}
+                                    colSpan={8}
                                     className="h-24 text-center"
                                 >
                                     No employees found.

@@ -38,7 +38,6 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { format } from "date-fns";
 import {
     Select,
     SelectContent,
@@ -48,7 +47,7 @@ import {
 } from "@/components/ui/select";
 import { toast } from "sonner";
 
-// Define the employee type
+// Update the Employee interface to include mobileNumber
 interface Employee {
     id: string;
     fullName: string;
@@ -56,6 +55,10 @@ interface Employee {
     education: string;
     avatar: string | null;
     createdAt: Date;
+    biometricId?: string | null;
+    designation?: string | null;
+    email?: string | null;
+    mobileNumber?: string | null;
 }
 
 interface EmployeesTableProps {
@@ -73,12 +76,32 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
     );
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // Generate email from name
+    const getEmailFromName = (name: string) => {
+        return `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
+    };
+
     // Filter employees based on search query
     const filteredEmployees = employees.filter((emp) => {
         return (
             emp.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
             emp.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            emp.education.toLowerCase().includes(searchQuery.toLowerCase())
+            emp.education.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (emp.biometricId &&
+                emp.biometricId
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            (emp.designation &&
+                emp.designation
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            (emp.email &&
+                emp.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (emp.mobileNumber &&
+                emp.mobileNumber
+                    .toLowerCase()
+                    .includes(searchQuery.toLowerCase())) ||
+            getEmailFromName(emp.fullName).includes(searchQuery.toLowerCase())
         );
     });
 
@@ -158,11 +181,6 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
         return `EMP${String(index + 1).padStart(3, "0")}`;
     };
 
-    // Generate email from name
-    const getEmailFromName = (name: string) => {
-        return `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
-    };
-
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -204,7 +222,9 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                             <TableHead>Employee</TableHead>
                             <TableHead>Academic Rank</TableHead>
                             <TableHead>Educational Attainment</TableHead>
-                            <TableHead>Join Date</TableHead>
+                            <TableHead>Designation</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>Mobile Number</TableHead>
                             <TableHead className="text-right">
                                 Actions
                             </TableHead>
@@ -215,11 +235,17 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                             paginatedEmployees.map((emp, index) => (
                                 <TableRow key={emp.id}>
                                     <TableCell className="font-medium">
-                                        {getEmployeeId(startIndex + index)}
+                                        {emp.biometricId ||
+                                            getEmployeeId(startIndex + index)}
                                     </TableCell>
                                     <TableCell>
                                         <div className="flex items-center gap-3">
-                                            <Avatar>
+                                            <Avatar
+                                                className="cursor-pointer"
+                                                onClick={() =>
+                                                    viewEmployee(emp.id)
+                                                }
+                                            >
                                                 {emp.avatar ? (
                                                     <AvatarImage
                                                         src={emp.avatar}
@@ -234,21 +260,20 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                                                 <div className="font-medium">
                                                     {emp.fullName}
                                                 </div>
-                                                <div className="text-sm text-muted-foreground">
-                                                    {getEmailFromName(
-                                                        emp.fullName
-                                                    )}
-                                                </div>
                                             </div>
                                         </div>
                                     </TableCell>
                                     <TableCell>{emp.position}</TableCell>
                                     <TableCell>{emp.education}</TableCell>
                                     <TableCell>
-                                        {format(
-                                            new Date(emp.createdAt),
-                                            "MMM d, yyyy"
-                                        )}
+                                        {emp.designation || "N/A"}
+                                    </TableCell>
+                                    <TableCell>
+                                        {emp.email ||
+                                            getEmailFromName(emp.fullName)}
+                                    </TableCell>
+                                    <TableCell>
+                                        {emp.mobileNumber || "N/A"}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
@@ -297,7 +322,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={6}
+                                    colSpan={8}
                                     className="h-24 text-center"
                                 >
                                     No employees found.

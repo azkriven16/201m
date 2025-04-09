@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EmployeeForm } from "@/components/employee/employee-form";
+import { auth } from "@/auth";
 
 export default async function EditEmployeePage({
     params,
@@ -19,6 +20,10 @@ export default async function EditEmployeePage({
     if (!employee) {
         notFound();
     }
+
+    const session = await auth();
+
+    if (session?.user?.email !== employee.email) return notFound();
 
     return (
         <div className="container mx-auto py-6 p-4">
