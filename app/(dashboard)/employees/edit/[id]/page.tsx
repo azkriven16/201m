@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EmployeeForm } from "@/components/employee/employee-form";
 import { auth } from "@/auth";
+import { adminEmails } from "@/lib/admin";
 
 export default async function EditEmployeePage({
     params,
@@ -23,7 +24,7 @@ export default async function EditEmployeePage({
 
     const session = await auth();
 
-    if (session?.user?.email !== employee.email) return notFound();
+    if (!adminEmails.includes(session?.user?.email ?? "")) return notFound();
 
     return (
         <div className="container mx-auto py-6 p-4">

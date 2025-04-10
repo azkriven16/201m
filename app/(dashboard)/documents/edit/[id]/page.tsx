@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { adminEmails } from "@/lib/admin";
+import { auth } from "@/auth";
 
 export default async function EditDocumentPage({
     params,
@@ -21,6 +23,10 @@ export default async function EditDocumentPage({
     if (!document) {
         notFound();
     }
+
+    const session = await auth();
+
+    if (!adminEmails.includes(session?.user?.email ?? "")) return notFound();
 
     return (
         <div className="container mx-auto py-6 p-4">

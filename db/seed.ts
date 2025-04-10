@@ -227,13 +227,278 @@ async function seed() {
 
     try {
         // Generate 50 employees
-        const employeeCount = 50;
-        const employeeData = Array.from(
-            { length: employeeCount },
-            generateEmployee
-        );
+        const facultyData = [
+            {
+                name: "NEMIA M. BORJA, RGen.",
+                academicRank: "",
+                designation: "",
+            },
+            {
+                name: "JOEY L. OBOS ABREY, AS Philo",
+                academicRank: "",
+                designation: "",
+            },
+            {
+                name: "JENNIFER D. DIGNADICE, AMEd",
+                academicRank: "",
+                designation: "",
+            },
+            { name: "JENETA R. BISMONTE", academicRank: "", designation: "" },
+            {
+                name: "LAWTON JOHN S. CABRAN, MSF",
+                academicRank: "",
+                designation: "",
+            },
+            {
+                name: "HAMILTON R. LA CRUZADA, BSGCS",
+                academicRank: "",
+                designation: "",
+            },
+            {
+                name: "JOCELYN Q. TOLENTINO, BSCom",
+                academicRank: "",
+                designation: "",
+            },
+            { name: "ABEL R. TACLANO", academicRank: "", designation: "" },
+            {
+                name: "JEROME Z. TACLANO, GCSS",
+                academicRank: "",
+                designation: "",
+            },
+            { name: "DANNIER C. DIAZ, BST", academicRank: "", designation: "" },
+            {
+                name: "BOBBY D. GERARDO, RME, REE, D.ENG.",
+                academicRank: "Professor VI",
+                designation: "University President",
+            },
+            {
+                name: "EDUARDO B. ABONG JR., MAEd",
+                academicRank: "Associate Professor I",
+                designation: "Chairperson, BSIT Drafting Technology Department",
+            },
+            {
+                name: "MICHAEL M. ACHAS, Ed. D",
+                academicRank: "Associate Professor V",
+                designation: "",
+            },
+            {
+                name: "ACAL, Hernan B.",
+                academicRank: "Associate Professor IV",
+                designation: "",
+            },
+            {
+                name: "AGUPITAN, Jason T.",
+                academicRank: "Instructor II",
+                designation: "",
+            },
+            {
+                name: "ALABAN, Leovigildo Rey S. Ed. D",
+                academicRank: "Instructor I",
+                designation: "Dean, College of Fisheries and Allied Sciences",
+            },
+            {
+                name: "ARANETA, JONNAS L.",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "ARABIA, JULIE ANNE S.",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "ANATING, LK GIN P.",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "AROCE, JOHN PAUL C.",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "ELIZABETH G. ALINDOG, Ed.D.",
+                academicRank: "Associate Professor IV",
+                designation: "",
+            },
+            {
+                name: "BELLA GERTRUDE D. ALPASAN, MAT, MIT",
+                academicRank: "Associate Professor IV",
+                designation: "Chairperson, BS Civil Engineering",
+            },
+            {
+                name: "CRISPAL M. MRMJE, ME.",
+                academicRank: "Associate Professor IV",
+                designation: "",
+            },
+            {
+                name: "JAN CARLO T. ARROYO, DIT",
+                academicRank: "Assistant Professor II",
+                designation: "Director, Scientific Publication",
+            },
+            {
+                name: "MARGAREC G. ASTRONOMIA, ME",
+                academicRank: "Associate Professor I",
+                designation: "",
+            },
+            {
+                name: "RAELY E. ASTRONOMIA, ME",
+                academicRank: "Assistant Professor I",
+                designation: "",
+            },
+            {
+                name: "RODEL B. ANTON, MAEd",
+                academicRank: "Assistant Professor IV",
+                designation: "",
+            },
+            {
+                name: "FARREH G. BACABAC, MBM",
+                academicRank: "Assistant Professor IV",
+                designation: "",
+            },
+            {
+                name: "CRISTY MAE H. BALCAGAN, MAEd",
+                academicRank: "Assistant Professor III",
+                designation: "",
+            },
+            {
+                name: "MICHELLE B. BACO, DPA",
+                academicRank: "Assistant Professor II",
+                designation: "",
+            },
+            {
+                name: "JENNIFER B. DIGNADICE, MAEd",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "CHRYST T. BACOS, MPA",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "ELYMAR L. BACQUAINO, ME",
+                academicRank: "Instructor III",
+                designation: "",
+            },
+            {
+                name: "NOEL B. BALLARA, Ed.D",
+                academicRank: "Associate Professor IV",
+                designation: "Director, Management Information System",
+            },
+            {
+                name: "ARNEW J. BALONTONG, MSCS",
+                academicRank: "Assistant Professor IV",
+                designation: "",
+            },
+            {
+                name: "HARLY ISRAEL G. BANDUJADO, MAEd",
+                academicRank: "Assistant Professor III",
+                designation: "",
+            },
+            {
+                name: "MARIBEL B. BANDUJO, MPA",
+                academicRank: "Assistant Professor III",
+                designation: "Chairperson, BS Computer Science",
+            },
+            {
+                name: "JOSEPH T. BANEHIT, MAEd",
+                academicRank: "Assistant Professor II",
+                designation: "",
+            },
+            {
+                name: "ARNOLD B. BANES, MAT, MIT",
+                academicRank: "Assistant Professor II",
+                designation: "",
+            },
+            {
+                name: "JESSIE S. BANES, Ph.D",
+                academicRank: "Associate Professor I",
+                designation: "",
+            },
+            {
+                name: "ANDREA MONICA R. BARBASA",
+                academicRank: "Assistant Professor I",
+                designation: "",
+            },
+            {
+                name: "JUVY A. BARCELONA, BSE",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "IRENE A. BARGO, MAT, Ed.D",
+                academicRank: "Associate Professor I",
+                designation: "",
+            },
+            {
+                name: "LOVELI O. BARIA, DIT",
+                academicRank: "Assistant Professor I",
+                designation: "",
+            },
+            {
+                name: "GLENN GRACE B. BAYHON, MAT",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "REGINA S. BAYHON, Ed.D.",
+                academicRank: "Professor I",
+                designation: "",
+            },
+            {
+                name: "VANESSA ROSE M. BAYONA, MPA",
+                academicRank: "Instructor I",
+                designation: "",
+            },
+            {
+                name: "PORTIA T. BEGASO, MPA",
+                academicRank: "Assistant Professor IV",
+                designation: "",
+            },
+            {
+                name: "MA. FE B. BELASOTO, Ed.D.",
+                academicRank: "Associate Professor I",
+                designation:
+                    "Director, Extension Services, OIC Chairperson of MPA",
+            },
+            {
+                name: "RENE JUN B. BELGICA, MPA",
+                academicRank: "Assistant Professor III",
+                designation: "",
+            },
+            {
+                name: "MARK JOHN A. BELLEZA, MAEd",
+                academicRank: "Assistant Professor I",
+                designation: "",
+            },
+            {
+                name: "MARIETH FLOR M. BERNARDEZ, MAT",
+                academicRank: "Assistant Professor II",
+                designation: "",
+            },
+        ];
 
-        console.log(`Generating ${employeeCount} employees...`);
+        console.log(`Generating ${facultyData.length} employees...`);
+
+        function transformFacultyData(faculty: any[]) {
+            return faculty.map((item) => ({
+                id: crypto.randomUUID(),
+                fullName: item.name,
+                position: `${item.academicRank}, ${item.designation}`,
+                education: "",
+                avatar: null,
+                birthday: new Date(), // Provide a default date
+                email: "", // Provide a default email
+                mobileNumber: "", // Provide a default mobile number
+                biometricId: "", // Provide a default biometricId
+                designation: item.designation,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+            }));
+        }
+
+        const employeeData = transformFacultyData(facultyData);
 
         // Insert employees in batches of 10
         const batchSize = 10;
