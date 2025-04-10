@@ -1,5 +1,11 @@
 "use client";
 
+import { PopoverContent } from "@/components/ui/popover";
+
+import { PopoverTrigger } from "@/components/ui/popover";
+
+import { Popover } from "@/components/ui/popover";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -16,14 +22,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { toast } from "sonner";
-import { CalendarIcon, FileIcon, Loader2 } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
-import { format } from "date-fns";
+    FileIcon,
+    Loader2,
+    Check,
+    ChevronsUpDown,
+    Upload,
+    FileText,
+    Clock,
+} from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -34,6 +41,24 @@ import {
 import type { Employee } from "@/db/schema";
 import { useRouter } from "next/navigation";
 import { UploadDropzone } from "@/lib/uploadthing";
+import {
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { DatePicker } from "@/components/date-picker";
 
 // Define the schema for client-side validation
 const formSchema = z.object({
@@ -54,7 +79,7 @@ const formSchema = z.object({
     ),
     expirationDate: z.date().optional(),
     authorId: z.string().uuid({
-        message: "Please select an employee.",
+        message: "Please select a document owner.",
     }),
     // We'll handle file validation separately with UploadThing
 });
@@ -68,6 +93,7 @@ export function DocumentForm({ employees }: { employees: Employee[] }) {
         size: number;
         type: string;
     } | null>(null);
+    const [openOwnerCombobox, setOpenOwnerCombobox] = useState(false);
     const router = useRouter();
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -174,233 +200,390 @@ export function DocumentForm({ employees }: { employees: Employee[] }) {
     }
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Document Title</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Resume" {...field} />
-                            </FormControl>
-                            <FormDescription>
-                                Enter a descriptive title for the document.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+        <Card className="border-none shadow-none sm:border sm:shadow-sm">
+            <CardHeader className="pb-4 pt-6 px-6">
+                <CardTitle className="text-2xl font-bold flex items-center gap-2">
+                    <FileText className="h-6 w-6 text-primary" />
+                    Upload New Document
+                </CardTitle>
+                <CardDescription>
+                    Fill in the document details and upload the file to add it
+                    to the system.
+                </CardDescription>
+            </CardHeader>
+            <Separator />
+            <CardContent className="p-6 pt-8">
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-8"
+                    >
+                        <div className="grid gap-8 md:grid-cols-2">
+                            <div className="space-y-8 md:col-span-1">
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-base font-medium">
+                                                Document Title
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder="Resume"
+                                                    {...field}
+                                                    className="h-10"
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Enter a descriptive title for
+                                                the document.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                <FormField
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Document Category</FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                            >
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a category" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="Appointment">
-                                        Appointment
-                                    </SelectItem>
-                                    <SelectItem value="Diploma">
-                                        Diploma
-                                    </SelectItem>
-                                    <SelectItem value="LicenseEligibility">
-                                        License/Eligibility
-                                    </SelectItem>
-                                    <SelectItem value="PersonalDataSheet">
-                                        Personal Data Sheet
-                                    </SelectItem>
-                                    <SelectItem value="ServiceRecord">
-                                        Service Record
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <FormDescription>
-                                Select the category that best describes this
-                                document.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                                <FormField
+                                    control={form.control}
+                                    name="category"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-base font-medium">
+                                                Document Category
+                                            </FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
+                                            >
+                                                <FormControl>
+                                                    <SelectTrigger className="h-10">
+                                                        <SelectValue placeholder="Select a category" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Appointment">
+                                                        Appointment
+                                                    </SelectItem>
+                                                    <SelectItem value="Diploma">
+                                                        Diploma
+                                                    </SelectItem>
+                                                    <SelectItem value="LicenseEligibility">
+                                                        License/Eligibility
+                                                    </SelectItem>
+                                                    <SelectItem value="PersonalDataSheet">
+                                                        Personal Data Sheet
+                                                    </SelectItem>
+                                                    <SelectItem value="ServiceRecord">
+                                                        Service Record
+                                                    </SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormDescription>
+                                                Select the category that best
+                                                describes this document.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                <div className="space-y-2">
-                    <FormLabel>Document File</FormLabel>
-                    {!uploadedFile ? (
-                        <UploadDropzone
-                            endpoint="documentUploader"
-                            onClientUploadComplete={(res) => {
-                                if (res && res.length > 0) {
-                                    setUploadedFile({
-                                        url: res[0].url,
-                                        key: res[0].key,
-                                        name: res[0].name,
-                                        size: res[0].size,
-                                        type:
-                                            res[0].type ||
-                                            "application/octet-stream",
-                                    });
-                                    toast.success(
-                                        "File uploaded successfully",
-                                        {
-                                            description:
-                                                "Your document has been uploaded and is ready to be submitted.",
-                                        }
-                                    );
-                                }
-                            }}
-                            onUploadError={(error: Error) => {
-                                toast.error("Error uploading file", {
-                                    description:
-                                        error.message ||
-                                        "There was a problem uploading your document.",
-                                });
-                            }}
-                            onUploadBegin={() => {
-                                toast.info("Uploading file...", {
-                                    description:
-                                        "Please wait while we upload your document.",
-                                });
-                            }}
-                        />
-                    ) : (
-                        <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-md">
-                            <div className="flex-shrink-0">
-                                <FileIcon className="h-10 w-10 text-blue-500" />
+                                <FormField
+                                    control={form.control}
+                                    name="expirationDate"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel className="text-base font-medium">
+                                                Expiration Date (Optional)
+                                            </FormLabel>
+                                            <FormControl>
+                                                <DatePicker
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                            </FormControl>
+                                            <FormDescription>
+                                                Set an expiration date for the
+                                                document. First select a year,
+                                                then choose the month and day.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="authorId"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col">
+                                            <FormLabel className="text-base font-medium">
+                                                Document Owner
+                                            </FormLabel>
+                                            <Popover
+                                                open={openOwnerCombobox}
+                                                onOpenChange={
+                                                    setOpenOwnerCombobox
+                                                }
+                                            >
+                                                <PopoverTrigger asChild>
+                                                    <FormControl>
+                                                        <Button
+                                                            variant="outline"
+                                                            role="combobox"
+                                                            aria-expanded={
+                                                                openOwnerCombobox
+                                                            }
+                                                            className={cn(
+                                                                "h-10 w-full justify-between",
+                                                                !field.value &&
+                                                                    "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            {field.value
+                                                                ? employees.find(
+                                                                      (
+                                                                          employee
+                                                                      ) =>
+                                                                          employee.id ===
+                                                                          field.value
+                                                                  )?.fullName
+                                                                : "Search for an employee..."}
+                                                            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                        </Button>
+                                                    </FormControl>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-[400px] p-0">
+                                                    <Command>
+                                                        <CommandInput placeholder="Search employees..." />
+                                                        <CommandList>
+                                                            <CommandEmpty>
+                                                                No employee
+                                                                found.
+                                                            </CommandEmpty>
+                                                            <CommandGroup>
+                                                                {employees.map(
+                                                                    (
+                                                                        employee
+                                                                    ) => (
+                                                                        <CommandItem
+                                                                            key={
+                                                                                employee.id
+                                                                            }
+                                                                            value={
+                                                                                employee.fullName
+                                                                            }
+                                                                            onSelect={() => {
+                                                                                form.setValue(
+                                                                                    "authorId",
+                                                                                    employee.id
+                                                                                );
+                                                                                setOpenOwnerCombobox(
+                                                                                    false
+                                                                                );
+                                                                            }}
+                                                                        >
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "mr-2 h-4 w-4",
+                                                                                    employee.id ===
+                                                                                        field.value
+                                                                                        ? "opacity-100"
+                                                                                        : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            {
+                                                                                employee.fullName
+                                                                            }
+                                                                            <span className="ml-2 text-xs text-muted-foreground">
+                                                                                {employee.employeeType ===
+                                                                                "Teaching"
+                                                                                    ? "Teaching"
+                                                                                    : "Non-Teaching"}
+                                                                            </span>
+                                                                        </CommandItem>
+                                                                    )
+                                                                )}
+                                                            </CommandGroup>
+                                                        </CommandList>
+                                                    </Command>
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormDescription>
+                                                Select the employee who owns
+                                                this document.
+                                            </FormDescription>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
-                            <div className="flex-1">
-                                <p className="font-medium">
-                                    {uploadedFile.name}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                    {getFileType(uploadedFile.type)} •{" "}
-                                    {formatFileSize(uploadedFile.size)}
-                                </p>
+
+                            <div className="space-y-8 md:col-span-1">
+                                <div className="space-y-2">
+                                    <FormLabel className="text-base font-medium">
+                                        Document File
+                                    </FormLabel>
+                                    {!uploadedFile ? (
+                                        <div className="border-2 border-dashed rounded-lg p-6 flex flex-col items-center justify-center bg-muted/30 hover:cursor-pointer">
+                                            <UploadDropzone
+                                                endpoint="documentUploader"
+                                                onClientUploadComplete={(
+                                                    res
+                                                ) => {
+                                                    if (res && res.length > 0) {
+                                                        setUploadedFile({
+                                                            url: res[0].url,
+                                                            key: res[0].key,
+                                                            name: res[0].name,
+                                                            size: res[0].size,
+                                                            type:
+                                                                res[0].type ||
+                                                                "application/octet-stream",
+                                                        });
+                                                        toast.success(
+                                                            "File uploaded successfully",
+                                                            {
+                                                                description:
+                                                                    "Your document has been uploaded and is ready to be submitted.",
+                                                            }
+                                                        );
+                                                    }
+                                                }}
+                                                onUploadError={(
+                                                    error: Error
+                                                ) => {
+                                                    toast.error(
+                                                        "Error uploading file",
+                                                        {
+                                                            description:
+                                                                error.message ||
+                                                                "There was a problem uploading your document.",
+                                                        }
+                                                    );
+                                                }}
+                                                onUploadBegin={() => {
+                                                    toast.info(
+                                                        "Uploading file...",
+                                                        {
+                                                            description:
+                                                                "Please wait while we upload your document.",
+                                                        }
+                                                    );
+                                                }}
+                                                className="w-full ut-button:bg-primary ut-button:hover:bg-primary/90 ut-button:ut-readying:bg-primary/70 ut-button:ut-uploading:bg-primary/70 ut-label:text-base"
+                                            />
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-4 p-6 bg-muted/30 rounded-lg border">
+                                            <div className="flex-shrink-0">
+                                                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                                                    <FileIcon className="h-6 w-6 text-primary" />
+                                                </div>
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-medium truncate">
+                                                    {uploadedFile.name}
+                                                </p>
+                                                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                                                    <span className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">
+                                                        {getFileType(
+                                                            uploadedFile.type
+                                                        )}
+                                                    </span>
+                                                    <span>
+                                                        {formatFileSize(
+                                                            uploadedFile.size
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="sm"
+                                                onClick={() =>
+                                                    setUploadedFile(null)
+                                                }
+                                            >
+                                                Replace
+                                            </Button>
+                                        </div>
+                                    )}
+                                    <FormDescription>
+                                        Upload a document file (PDF, DOC, DOCX,
+                                        XLS, XLSX). Maximum file size is 10MB.
+                                    </FormDescription>
+                                </div>
+
+                                <div className="bg-muted/30 rounded-lg p-4 border">
+                                    <h3 className="font-medium flex items-center gap-2 mb-2">
+                                        <Clock className="h-4 w-4 text-muted-foreground" />
+                                        Document Status
+                                    </h3>
+                                    <p className="text-sm text-muted-foreground mb-4">
+                                        The document status will be
+                                        automatically determined based on the
+                                        expiration date:
+                                    </p>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                                            <span>
+                                                Active - Document is valid and
+                                                not close to expiration
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                            <span>
+                                                Expiring Soon - Document expires
+                                                within 30 days
+                                            </span>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                                            <span>
+                                                Expired - Document has passed
+                                                its expiration date
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+                        </div>
+
+                        <Separator className="my-6" />
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-end">
                             <Button
                                 type="button"
                                 variant="outline"
-                                size="sm"
-                                onClick={() => setUploadedFile(null)}
+                                onClick={() => router.push("/documents")}
                             >
-                                Replace
+                                Cancel
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={isLoading || !uploadedFile}
+                                className="gap-2"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        Uploading...
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload className="h-4 w-4" />
+                                        Upload Document
+                                    </>
+                                )}
                             </Button>
                         </div>
-                    )}
-                    <FormDescription>
-                        Upload a document file (PDF, DOC, DOCX, XLS, XLSX).
-                        Maximum file size is 10MB.
-                    </FormDescription>
-                </div>
-
-                <FormField
-                    control={form.control}
-                    name="expirationDate"
-                    render={({ field }) => (
-                        <FormItem className="flex flex-col">
-                            <FormLabel>Expiration Date (Optional)</FormLabel>
-                            <Popover>
-                                <PopoverTrigger asChild>
-                                    <FormControl>
-                                        <Button
-                                            variant="outline"
-                                            className="w-full pl-3 text-left font-normal"
-                                        >
-                                            {field.value ? (
-                                                format(field.value, "PPP")
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                    className="w-auto p-0"
-                                    align="start"
-                                >
-                                    <Calendar
-                                        mode="single"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                        initialFocus
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FormDescription>
-                                Set an expiration date for the document. You can
-                                select past dates for expired documents.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="authorId"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Document Author</FormLabel>
-                            <FormControl>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select an employee" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {employees.map((employee) => (
-                                            <SelectItem
-                                                key={employee.id}
-                                                value={employee.id}
-                                            >
-                                                {employee.fullName}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </FormControl>
-                            <FormDescription>
-                                Select the employee who owns this document.
-                            </FormDescription>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <div className="flex gap-4">
-                    <Button type="submit" disabled={isLoading || !uploadedFile}>
-                        {isLoading ? (
-                            <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Uploading...
-                            </>
-                        ) : (
-                            "Upload Document"
-                        )}
-                    </Button>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => router.push("/documents")}
-                    >
-                        Cancel
-                    </Button>
-                </div>
-            </form>
-        </Form>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
     );
 }

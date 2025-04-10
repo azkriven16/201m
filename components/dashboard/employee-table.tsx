@@ -174,7 +174,7 @@ export function EmployeeTable({ employees }: EmployeeTableProps) {
                                 </TableCell>
                             </TableRow>
                         )}
-                    </TableBody>
+                </TableBody>
                 </Table>
             </div>
         </div>

@@ -1,6 +1,5 @@
 import { relations } from "drizzle-orm";
 import {
-    boolean,
     timestamp,
     pgTable,
     text,
@@ -8,6 +7,7 @@ import {
     integer,
     uuid,
     pgEnum,
+    boolean,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -55,25 +55,6 @@ export const sessions = pgTable("session", {
     expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-// export const verificationTokens = pgTable(
-//     "verificationToken",
-//     {
-//         identifier: text("identifier").notNull(),
-//         token: text("token").notNull(),
-//         expires: timestamp("expires", { mode: "date" }).notNull(),
-//     },
-//     (verificationToken) => [
-//         {
-//             compositePk: primaryKey({
-//                 columns: [
-//                     verificationToken.identifier,
-//                     verificationToken.token,
-//                 ],
-//             }),
-//         },
-//     ]
-// );
-
 export const authenticators = pgTable(
     "authenticator",
     {
@@ -104,15 +85,22 @@ export const documentStatus = pgEnum("document_status", [
     "Expired",
 ]);
 
+// Employee type enum
+export const employeeType = pgEnum("employee_type", [
+    "Teaching",
+    "NonTeaching",
+]);
+
 // Employee model - Updated with new fields
 export const employees = pgTable("employees", {
     id: uuid("id").defaultRandom().primaryKey(),
     fullName: text("full_name").notNull(),
     position: text("position").notNull(),
+    employeeType: employeeType("employee_type").notNull().default("Teaching"),
     education: text("education").notNull(),
     avatar: text("avatar"),
     birthday: timestamp("birthday", { mode: "date" }).notNull(),
-    // New fields
+    // Other fields
     email: text("email"),
     mobileNumber: text("mobile_number"),
     biometricId: text("biometric_id"),

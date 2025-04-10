@@ -1,9 +1,16 @@
+import { getAllEmployees } from "@/lib/db";
+import { EmployeesTable } from "@/components/employee/employees-table";
+import { EmployeeStats } from "@/components/employee/employee-stats";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { UserPlus, Users, Briefcase, GraduationCap, Cake } from "lucide-react";
-import { EmployeeStats } from "@/components/employee/employee-stats";
-import { EmployeesTable } from "@/components/employee/employees-table";
-import { getAllEmployees } from "@/lib/db";
+import {
+    UserPlus,
+    Users,
+    Briefcase,
+    School,
+    UserCog,
+    Cake,
+} from "lucide-react";
 
 export default async function EmployeesPage() {
     // Fetch employees using Drizzle
@@ -15,12 +22,24 @@ export default async function EmployeesPage() {
     // Calculate statistics
     const totalEmployees = employees.length;
     const totalPositions = positions.length;
+    const teachingEmployees = employees.filter(
+        (emp) => emp.employeeType === "Teaching"
+    ).length;
+    const nonTeachingEmployees = employees.filter(
+        (emp) => emp.employeeType === "NonTeaching"
+    ).length;
 
     return (
         <div className="container mx-auto py-6 space-y-6 p-4">
             <div className="flex justify-between items-center">
                 <h1 className="text-2xl font-bold">Employees</h1>
                 <div className="flex gap-2">
+                    <Link href="/employees/birthdays">
+                        <Button variant="outline" className="gap-2">
+                            <Cake className="h-4 w-4" />
+                            Birthdays
+                        </Button>
+                    </Link>
                     <Link href="/employees/add">
                         <Button className="gap-2">
                             <UserPlus className="h-4 w-4" />
@@ -37,19 +56,19 @@ export default async function EmployeesPage() {
                     icon={<Briefcase className="h-5 w-5 text-gray-500" />}
                 />
                 <EmployeeStats
-                    title="Active Employees"
-                    value={totalEmployees}
-                    icon={<Users className="h-5 w-5 text-green-500" />}
+                    title="Teaching Staff"
+                    value={teachingEmployees}
+                    icon={<School className="h-5 w-5 text-green-500" />}
                 />
                 <EmployeeStats
-                    title="On Leave"
-                    value={0}
-                    icon={<Users className="h-5 w-5 text-yellow-500" />}
+                    title="Non-Teaching Staff"
+                    value={nonTeachingEmployees}
+                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
                 />
                 <EmployeeStats
                     title="Total Employees"
                     value={totalEmployees}
-                    icon={<GraduationCap className="h-5 w-5 text-blue-500" />}
+                    icon={<Users className="h-5 w-5 text-blue-500" />}
                 />
             </div>
 

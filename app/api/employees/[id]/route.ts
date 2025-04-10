@@ -59,6 +59,7 @@ export async function PATCH(
         // Prepare update data with explicit handling of all fields
         const updateData: Partial<NewEmployee> = {
             fullName: data.fullName,
+            employeeType: data.employeeType,
             position: data.position,
             education: data.education,
             // Explicitly handle avatar field - don't use undefined

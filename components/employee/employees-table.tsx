@@ -45,9 +45,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-// Update the Employee interface to include mobileNumber
+// Update the Employee interface to include employeeType
 interface Employee {
     id: string;
     fullName: string;
@@ -55,6 +56,7 @@ interface Employee {
     education: string;
     avatar: string | null;
     createdAt: Date;
+    employeeType?: "Teaching" | "NonTeaching";
     biometricId?: string | null;
     designation?: string | null;
     email?: string | null;
@@ -75,14 +77,23 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
         null
     );
     const [isDeleting, setIsDeleting] = useState(false);
+    const [typeFilter, setTypeFilter] = useState<
+        "All" | "Teaching" | "NonTeaching"
+    >("All");
 
     // Generate email from name
     const getEmailFromName = (name: string) => {
         return `${name.toLowerCase().replace(/\s+/g, ".")}@example.com`;
     };
 
-    // Filter employees based on search query
+    // Filter employees based on search query and type filter
     const filteredEmployees = employees.filter((emp) => {
+        // Type filter
+        if (typeFilter !== "All" && emp.employeeType !== typeFilter) {
+            return false;
+        }
+
+        // Search filter
         return (
             emp.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
             emp.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -195,6 +206,27 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                 </div>
                 <div className="flex items-center gap-2">
                     <Select
+                        value={typeFilter}
+                        onValueChange={(
+                            value: "All" | "Teaching" | "NonTeaching"
+                        ) => {
+                            setTypeFilter(value);
+                            setCurrentPage(1);
+                        }}
+                    >
+                        <SelectTrigger className="w-[150px]">
+                            <SelectValue placeholder="All Types" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="All">All Types</SelectItem>
+                            <SelectItem value="Teaching">Teaching</SelectItem>
+                            <SelectItem value="NonTeaching">
+                                Non-Teaching
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+
+                    <Select
                         value={itemsPerPage.toString()}
                         onValueChange={(value) => {
                             setItemsPerPage(Number.parseInt(value));
@@ -220,7 +252,8 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                         <TableRow>
                             <TableHead>ID</TableHead>
                             <TableHead>Employee</TableHead>
-                            <TableHead>Academic Rank</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Position</TableHead>
                             <TableHead>Educational Attainment</TableHead>
                             <TableHead>Designation</TableHead>
                             <TableHead>Email</TableHead>
@@ -262,6 +295,19 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                                                 </div>
                                             </div>
                                         </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Badge
+                                            variant={
+                                                emp.employeeType === "Teaching"
+                                                    ? "default"
+                                                    : "secondary"
+                                            }
+                                        >
+                                            {emp.employeeType === "Teaching"
+                                                ? "Teaching"
+                                                : "Non-Teaching"}
+                                        </Badge>
                                     </TableCell>
                                     <TableCell>{emp.position}</TableCell>
                                     <TableCell>{emp.education}</TableCell>
@@ -322,7 +368,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={8}
+                                    colSpan={9}
                                     className="h-24 text-center"
                                 >
                                     No employees found.
