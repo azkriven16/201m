@@ -103,9 +103,12 @@ const formSchema = z.object({
     fullName: z.string().min(2, {
         message: "Full name must be at least 2 characters.",
     }),
-    employeeType: z.enum(["Teaching", "NonTeaching"], {
-        required_error: "Employee type is required.",
-    }),
+    employeeType: z.enum(
+        ["Teaching", "NonTeaching", "cosTeaching", "cosNonTeaching"],
+        {
+            required_error: "Employee type is required.",
+        }
+    ),
     position: z.string().min(2, {
         message: "Position must be at least 2 characters.",
     }),

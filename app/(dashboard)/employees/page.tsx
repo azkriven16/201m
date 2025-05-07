@@ -20,13 +20,18 @@ export default async function EmployeesPage() {
     const positions = Array.from(new Set(employees.map((emp) => emp.position)));
 
     // Calculate statistics
-    const totalEmployees = employees.length;
-    const totalPositions = positions.length;
+
     const teachingEmployees = employees.filter(
         (emp) => emp.employeeType === "Teaching"
     ).length;
     const nonTeachingEmployees = employees.filter(
         (emp) => emp.employeeType === "NonTeaching"
+    ).length;
+    const cosTeachingEmployees = employees.filter(
+        (emp) => emp.employeeType === "cosTeaching"
+    ).length;
+    const cosNonTeachingEmployees = employees.filter(
+        (emp) => emp.employeeType === "cosNonTeaching"
     ).length;
 
     return (
@@ -51,11 +56,6 @@ export default async function EmployeesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <EmployeeStats
-                    title="Total Departments"
-                    value={totalPositions}
-                    icon={<Briefcase className="h-5 w-5 text-gray-500" />}
-                />
-                <EmployeeStats
                     title="Teaching Staff"
                     value={teachingEmployees}
                     icon={<School className="h-5 w-5 text-green-500" />}
@@ -66,9 +66,14 @@ export default async function EmployeesPage() {
                     icon={<UserCog className="h-5 w-5 text-yellow-500" />}
                 />
                 <EmployeeStats
-                    title="Total Employees"
-                    value={totalEmployees}
-                    icon={<Users className="h-5 w-5 text-blue-500" />}
+                    title="COS Non-Teaching Staff"
+                    value={cosNonTeachingEmployees}
+                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
+                />
+                <EmployeeStats
+                    title="COS Teaching Staff"
+                    value={cosTeachingEmployees}
+                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
                 />
             </div>
 

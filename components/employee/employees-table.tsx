@@ -56,12 +56,24 @@ interface Employee {
     education: string;
     avatar: string | null;
     createdAt: Date;
-    employeeType?: "Teaching" | "NonTeaching";
+    employeeType?:
+        | "Teaching"
+        | "NonTeaching"
+        | "cosTeaching"
+        | "cosNonTeaching";
     biometricId?: string | null;
     designation?: string | null;
     email?: string | null;
     mobileNumber?: string | null;
 }
+
+// Define type for the filter
+type EmployeeTypeFilter =
+    | "All"
+    | "Teaching"
+    | "NonTeaching"
+    | "cosTeaching"
+    | "cosNonTeaching";
 
 interface EmployeesTableProps {
     employees: Employee[];
@@ -77,9 +89,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
         null
     );
     const [isDeleting, setIsDeleting] = useState(false);
-    const [typeFilter, setTypeFilter] = useState<
-        "All" | "Teaching" | "NonTeaching"
-    >("All");
+    const [typeFilter, setTypeFilter] = useState<EmployeeTypeFilter>("All");
 
     // Generate email from name
     const getEmailFromName = (name: string) => {
@@ -192,6 +202,22 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
         return `EMP${String(index + 1).padStart(3, "0")}`;
     };
 
+    // Get badge variant and label based on employee type
+    const getEmployeeBadge = (type?: string) => {
+        switch (type) {
+            case "Teaching":
+                return { variant: "default", label: "Faculty" };
+            case "NonTeaching":
+                return { variant: "secondary", label: "Staff" };
+            case "cosTeaching":
+                return { variant: "outline", label: "COS Faculty" };
+            case "cosNonTeaching":
+                return { variant: "outline", label: "COS Staff" };
+            default:
+                return { variant: "secondary", label: "Unknown" };
+        }
+    };
+
     return (
         <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -207,14 +233,12 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                 <div className="flex items-center gap-2">
                     <Select
                         value={typeFilter}
-                        onValueChange={(
-                            value: "All" | "Teaching" | "NonTeaching"
-                        ) => {
+                        onValueChange={(value: EmployeeTypeFilter) => {
                             setTypeFilter(value);
                             setCurrentPage(1);
                         }}
                     >
-                        <SelectTrigger className="w-[150px]">
+                        <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="All Types" />
                         </SelectTrigger>
                         <SelectContent>
@@ -222,6 +246,12 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                             <SelectItem value="Teaching">Teaching</SelectItem>
                             <SelectItem value="NonTeaching">
                                 Non-Teaching
+                            </SelectItem>
+                            <SelectItem value="cosTeaching">
+                                COS Teaching
+                            </SelectItem>
+                            <SelectItem value="cosNonTeaching">
+                                COS Non-Teaching
                             </SelectItem>
                         </SelectContent>
                     </Select>
@@ -299,14 +329,16 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                                     <TableCell>
                                         <Badge
                                             variant={
-                                                emp.employeeType === "Teaching"
-                                                    ? "default"
-                                                    : "secondary"
+                                                getEmployeeBadge(
+                                                    emp.employeeType
+                                                ).variant as any
                                             }
                                         >
-                                            {emp.employeeType === "Teaching"
-                                                ? "Teaching"
-                                                : "Non-Teaching"}
+                                            {
+                                                getEmployeeBadge(
+                                                    emp.employeeType
+                                                ).label
+                                            }
                                         </Badge>
                                     </TableCell>
                                     <TableCell>{emp.position}</TableCell>

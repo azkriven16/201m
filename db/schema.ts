@@ -89,6 +89,8 @@ export const documentStatus = pgEnum("document_status", [
 export const employeeType = pgEnum("employee_type", [
     "Teaching",
     "NonTeaching",
+    "cosTeaching",
+    "cosNonTeaching",
 ]);
 
 // Employee model - Updated with new fields
