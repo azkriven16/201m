@@ -28,7 +28,7 @@ import { EmployeePositionChart } from "@/components/dashboard/employee-position-
 import { DocumentCategoryChart } from "@/components/dashboard/document-category-chart";
 import { RecentActivityList } from "@/components/dashboard/recent-activity-list";
 import { DocumentExpiryTimeline } from "@/components/dashboard/document-expiry-timeline";
-import { EmployeeTable } from "@/components/dashboard/employee-table";
+import { EmployeeTable } from "@/components/dashboard/dashboard-employee-table";
 import { DashboardFilter } from "@/components/dashboard/dashboard-filter";
 
 export default async function DashboardPage() {

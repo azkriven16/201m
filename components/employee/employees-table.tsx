@@ -64,7 +64,7 @@ interface Employee {
     biometricId?: string | null;
     designation?: string | null;
     email?: string | null;
-    mobileNumber?: string | null;
+    employmentDate?: string | null;
 }
 
 // Define type for the filter
@@ -118,8 +118,8 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                     .includes(searchQuery.toLowerCase())) ||
             (emp.email &&
                 emp.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
-            (emp.mobileNumber &&
-                emp.mobileNumber
+            (emp.employmentDate &&
+                emp.employmentDate
                     .toLowerCase()
                     .includes(searchQuery.toLowerCase())) ||
             getEmailFromName(emp.fullName).includes(searchQuery.toLowerCase())
@@ -287,7 +287,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                             <TableHead>Educational Attainment</TableHead>
                             <TableHead>Designation</TableHead>
                             <TableHead>Email</TableHead>
-                            <TableHead>Mobile Number</TableHead>
+                            <TableHead>Employment Date</TableHead>
                             <TableHead className="text-right">
                                 Actions
                             </TableHead>
@@ -351,7 +351,7 @@ export function EmployeesTable({ employees }: EmployeesTableProps) {
                                             getEmailFromName(emp.fullName)}
                                     </TableCell>
                                     <TableCell>
-                                        {emp.mobileNumber || "N/A"}
+                                        {emp.employmentDate || "N/A"}
                                     </TableCell>
                                     <TableCell className="text-right">
                                         <DropdownMenu>
