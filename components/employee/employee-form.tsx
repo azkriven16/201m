@@ -532,6 +532,12 @@ export function EmployeeForm({ employee }: { employee?: Employee }) {
                                                             <SelectItem value="NonTeaching">
                                                                 Non-Teaching
                                                             </SelectItem>
+                                                            <SelectItem value="cosTeaching">
+                                                                COS Teaching
+                                                            </SelectItem>
+                                                            <SelectItem value="cosNonTeaching">
+                                                                COS Non-Teaching
+                                                            </SelectItem>
                                                         </SelectContent>
                                                     </Select>
                                                     <FormDescription>

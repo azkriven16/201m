@@ -107,6 +107,7 @@ export const employees = pgTable("employees", {
     mobileNumber: text("mobile_number"),
     biometricId: text("biometric_id"),
     designation: text("designation"),
+    employmentDate: text("employmentDate"),
     // Timestamps
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),

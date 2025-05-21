@@ -10,6 +10,8 @@ import {
     School,
     UserCog,
     Cake,
+    User2,
+    UserCheck2,
 } from "lucide-react";
 
 export default async function EmployeesPage() {
@@ -58,22 +60,22 @@ export default async function EmployeesPage() {
                 <EmployeeStats
                     title="Teaching Staff"
                     value={teachingEmployees}
-                    icon={<School className="h-5 w-5 text-green-500" />}
+                    icon={<User2 className="h-5 w-5 text-green-500" />}
                 />
                 <EmployeeStats
                     title="Non-Teaching Staff"
                     value={nonTeachingEmployees}
-                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
+                    icon={<User2 className="h-5 w-5 text-blue-500" />}
                 />
                 <EmployeeStats
                     title="COS Non-Teaching Staff"
                     value={cosNonTeachingEmployees}
-                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
+                    icon={<User2 className="h-5 w-5 text-purple-500" />}
                 />
                 <EmployeeStats
                     title="COS Teaching Staff"
                     value={cosTeachingEmployees}
-                    icon={<UserCog className="h-5 w-5 text-yellow-500" />}
+                    icon={<User2 className="h-5 w-5 text-yellow-500" />}
                 />
             </div>
 
