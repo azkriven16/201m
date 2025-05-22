@@ -1,7 +1,10 @@
+import { NextResponse } from "next/server";
 import { db } from "../db";
 import {
     documents,
     employees,
+    salaries,
+    Salary,
     type Document,
     type Employee,
     type NewDocument,
@@ -207,4 +210,16 @@ export async function getRecentDocuments(
         ...row.document,
         author: row.employee,
     }));
+}
+
+export async function getSalaryHistoryByEmployeeId(
+    employeeId: string
+): Promise<NextResponse | Salary[]> {
+    const salaryRecords = await db
+        .select()
+        .from(salaries)
+        .where(eq(salaries.employeeId, employeeId))
+        .orderBy(desc(salaries.effectiveDate));
+
+    return salaryRecords;
 }

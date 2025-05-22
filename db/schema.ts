@@ -8,6 +8,7 @@ import {
     uuid,
     pgEnum,
     boolean,
+    numeric,
 } from "drizzle-orm/pg-core";
 import type { AdapterAccountType } from "next-auth/adapters";
 
@@ -104,13 +105,38 @@ export const employees = pgTable("employees", {
     birthday: timestamp("birthday", { mode: "date" }).notNull(),
     // Other fields
     email: text("email"),
-    mobileNumber: text("mobile_number"),
     biometricId: text("biometric_id"),
     designation: text("designation"),
+    mobileNumber: text("mobile_number"),
     employmentDate: text("employmentDate"),
+
     // Timestamps
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
+
+// Salary record reason enum
+export const salaryChangeReason = pgEnum("salary_change_reason", [
+    "Initial",
+    "Annual",
+    "Promotion",
+    "Performance",
+    "Adjustment",
+    "Other",
+]);
+
+// Salary history table
+export const salaries = pgTable("salaries", {
+    id: uuid("id").defaultRandom().primaryKey(),
+    employeeId: uuid("employee_id")
+        .notNull()
+        .references(() => employees.id, { onDelete: "cascade" }),
+    amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+    effectiveDate: timestamp("effective_date", { mode: "date" }).notNull(),
+    reason: salaryChangeReason("reason").default("Initial").notNull(),
+    notes: text("notes"),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    createdById: text("created_by_id").references(() => users.id),
 });
 
 export const documents = pgTable("documents", {
@@ -131,8 +157,10 @@ export const documents = pgTable("documents", {
         .references(() => employees.id, { onDelete: "cascade" }),
 });
 
+// Relations
 export const employeesRelations = relations(employees, ({ many }) => ({
     documents: many(documents),
+    salaries: many(salaries),
 }));
 
 export const documentsRelations = relations(documents, ({ one }) => ({
@@ -142,9 +170,23 @@ export const documentsRelations = relations(documents, ({ one }) => ({
     }),
 }));
 
+export const salariesRelations = relations(salaries, ({ one }) => ({
+    employee: one(employees, {
+        fields: [salaries.employeeId],
+        references: [employees.id],
+    }),
+    createdBy: one(users, {
+        fields: [salaries.createdById],
+        references: [users.id],
+    }),
+}));
+
 // Types
 export type Employee = typeof employees.$inferSelect;
 export type NewEmployee = typeof employees.$inferInsert;
 
 export type Document = typeof documents.$inferSelect;
 export type NewDocument = typeof documents.$inferInsert;
+
+export type Salary = typeof salaries.$inferSelect;
+export type NewSalary = typeof salaries.$inferInsert;

@@ -1,4 +1,4 @@
-import { getEmployeeById, getDocumentsByEmployeeId } from "@/lib/db";
+import { getEmployeeById, getDocumentsByEmployeeId,getSalaryHistoryByEmployeeId } from "@/lib/db";
 import { Button } from "@/components/ui/button";
 import {
     ArrowLeft,
@@ -24,6 +24,8 @@ import {
 } from "@/components/ui/card";
 import { format, isSameDay } from "date-fns";
 import { EmployeeDocumentsTable } from "@/components/employee/employee-documents-table";
+import { SalaryHistory } from "@/components/salary/employee-salary";
+import { auth } from "@/auth";
 
 export default async function ViewEmployeePage({
     params,
@@ -41,6 +43,13 @@ export default async function ViewEmployeePage({
 
     // Get employee documents with Drizzle
     const documents = await getDocumentsByEmployeeId(employee.id);
+
+    // Get employee salary records
+    const salaryHistory = await getSalaryHistoryByEmployeeId(employee.id);
+
+    // Get current user session
+    const session = await auth();
+    const user = session?.user;
 
     // Get initials for avatar fallback
     const getInitials = (name: string) => {
@@ -174,8 +183,9 @@ export default async function ViewEmployeePage({
                     </CardContent>
                 </Card>
 
-                {/* Employee Documents */}
+                {/* Employee Documents and Salary History */}
                 <div className="md:col-span-2 space-y-6">
+                    {/* Documents Card */}
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-xl flex items-center gap-2">
@@ -198,11 +208,23 @@ export default async function ViewEmployeePage({
                         </CardContent>
                     </Card>
 
+                    {/* Salary History Card */}
+                    <SalaryHistory
+                        employeeId={employee.id}
+                        salaries={salaryHistory}
+                        currentUser={{
+                            id: user?.id || "",
+                            name: user?.name || "System User",
+                        }}
+                    />
+
                     <div className="flex justify-end gap-4">
                         <Link href={`/employees/edit/${employee.id}`}>
                             <Button variant="outline">Edit Employee</Button>
                         </Link>
-                        <Link href="/documents/upload">
+                        <Link
+                            href={`/documents/upload?employeeId=${employee.id}`}
+                        >
                             <Button>
                                 <FileText className="mr-2 h-4 w-4" />
                                 Upload Document
